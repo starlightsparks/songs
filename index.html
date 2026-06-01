@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Music Widget</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #0f0f12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: "Times New Roman", serif;
+    color: white;
+  }
+
+  .player {
+    width: 320px;
+    background: #17161c;
+    padding: 18px;
+    border-radius: 14px;
+    position: relative;
+  }
+
+  .gear {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+
+  .gear:hover {
+    opacity: 1;
+  }
+
+  .panel {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background: #1f1d25;
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+    width: 160px;
+  }
+
+  .song {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    background: transparent;
+  }
+
+  .song:hover {
+    background: #2a2733;
+  }
+
+  .song.active {
+    background: #39294f;
+  }
+
+  .title {
+    font-size: 14px;
+    margin-bottom: 18px;
+    opacity: 0.9;
+  }
+
+  .timebar {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .bar {
+    flex: 1;
+    height: 4px;
+    background: #2a2a2a;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .progress {
+    height: 100%;
+    width: 0%;
+    background: #39294f;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+  }
+
+  .btn {
+    cursor: pointer;
+    user-select: none;
+    font-size: 20px;
+    padding: 6px 14px;
+    border-radius: 8px;
+  }
+
+  .btn:hover {
+    background: #2a2733;
+  }
+
+  .time {
+    font-size: 12px;
+    opacity: 0.7;
+    min-width: 40px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="player">
+
+  <div class="gear" onclick="togglePanel()">⚙</div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="title" id="title">Enter Song</div>
+
+  <div class="timebar">
+    <span class="time" id="current">0:00</span>
+
+    <div class="bar" onclick="seek(event)">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <span class="time" id="duration">0:00</span>
+  </div>
+
+  <audio id="audio"></audio>
+
+  <div class="controls">
+    <div class="btn" onclick="playPause()" id="pp">||</div>
+  </div>
+
+</div>
+
+<script>
+const audio = document.getElementById("audio");
+const progress = document.getElementById("progress");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
+const panel = document.getElementById("panel");
+const title = document.getElementById("title");
+const pp = document.getElementById("pp");
+
+const songs = {
+  "song1.mp3": "Song 1",
+  "song2.mp3": "Song 2",
+  "song3.mp3": "Song 3"
+};
+
+let currentSong = "song1.mp3";
+
+function buildMenu() {
+  panel.innerHTML = "";
+
+  for (let file in songs) {
+    let div = document.createElement("div");
+    div.className = "song" + (file === currentSong ? " active" : "");
+    div.textContent = songs[file];
+
+    div.onclick = () => {
+      currentSong = file;
+      loadSong();
+      play();
+      buildMenu();
+    };
+
+    panel.appendChild(div);
+  }
+}
+
+function loadSong() {
+  audio.src = currentSong;
+  title.textContent = songs[currentSong];
+}
+
+function play() {
+  audio.play();
+  pp.textContent = "||";
+}
+
+function pause() {
+  audio.pause();
+  pp.textContent = "▷";
+}
+
+function playPause() {
+  if (!audio.src) loadSong();
+
+  if (audio.paused) {
+    play();
+  } else {
+    pause();
+  }
+}
+
+audio.addEventListener("timeupdate", () => {
+  let percent = (audio.currentTime / audio.duration) * 100;
+  progress.style.width = percent + "%";
+
+  current.textContent = format(audio.currentTime);
+  duration.textContent = format(audio.duration);
+});
+
+function format(sec) {
+  if (!sec) return "0:00";
+  let m = Math.floor(sec / 60);
+  let s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" + s : s);
+}
+
+function seek(e) {
+  let bar = e.currentTarget;
+  let percent = e.offsetX / bar.offsetWidth;
+  audio.currentTime = percent * audio.duration;
+}
+
+function togglePanel() {
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
+loadSong();
+buildMenu();
+</script>
+
+</body>
+</html>
