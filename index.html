@@ -1,126 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Music Widget</title>
 
 <style>
-  body {
-    margin: 0;
-    background: #0f0f12;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    font-family: "Times New Roman", serif;
-    color: white;
-  }
+body{
+    margin:0;
+    background:#191919;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:"Times New Roman", serif;
+    color:white;
+}
 
-  .player {
-    width: 320px;
-    background: #17161c;
-    padding: 18px;
-    border-radius: 14px;
-    position: relative;
-  }
+.player{
+    width:320px;
+    background:#232323;
+    border-radius:14px;
+    padding:20px;
+    position:relative;
+    box-sizing:border-box;
+}
 
-  .gear {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    opacity: 0.7;
-  }
+.gear{
+    position:absolute;
+    top:12px;
+    right:12px;
+    cursor:pointer;
+    font-size:18px;
+    opacity:.8;
+    transition:.2s;
+}
 
-  .gear:hover {
-    opacity: 1;
-  }
+.gear:hover{
+    opacity:1;
+}
 
-  .panel {
-    position: absolute;
-    top: 40px;
-    right: 10px;
-    background: #1f1d25;
-    padding: 10px;
-    border-radius: 10px;
-    display: none;
-    width: 160px;
-  }
+.cover{
+    width:130px;
+    height:130px;
+    margin:0 auto 12px;
+    border-radius:10px;
+    object-fit:cover;
+    display:block;
+}
 
-  .song {
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    background: transparent;
-  }
+.title{
+    text-align:center;
+    font-size:16px;
+    margin-bottom:15px;
+    color:white;
+}
 
-  .song:hover {
-    background: #2a2733;
-  }
+.timebar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+}
 
-  .song.active {
-    background: #39294f;
-  }
+.time{
+    font-size:12px;
+    opacity:.75;
+    min-width:36px;
+    text-align:center;
+}
 
-  .title {
-    font-size: 14px;
-    margin-bottom: 18px;
-    opacity: 0.9;
-  }
+.bar{
+    flex:1;
+    height:4px;
+    background:#3a3a3a;
+    border-radius:999px;
+    cursor:pointer;
+    position:relative;
+}
 
-  .timebar {
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
+.progress{
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:0%;
+    background:#39294f;
+    border-radius:999px;
+}
 
-  .bar {
-    flex: 1;
-    height: 4px;
-    background: #2a2a2a;
-    border-radius: 20px;
-    position: relative;
-    cursor: pointer;
-  }
+.progress::after{
+    content:"";
+    position:absolute;
+    right:-5px;
+    top:50%;
+    transform:translateY(-50%);
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#39294f;
+}
 
-  .progress {
-    height: 100%;
-    width: 0%;
-    background: #39294f;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-  .controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-  }
+.btn{
+    cursor:pointer;
+    user-select:none;
+    font-size:22px;
+    padding:4px 12px;
+    transition:.2s;
+}
 
-  .btn {
-    cursor: pointer;
-    user-select: none;
-    font-size: 20px;
-    padding: 6px 14px;
-    border-radius: 8px;
-  }
+.btn:hover{
+    color:#39294f;
+}
 
-  .btn:hover {
-    background: #2a2733;
-  }
+.panel{
+    position:absolute;
+    top:42px;
+    right:12px;
+    width:170px;
+    background:#2b2b2b;
+    border-radius:10px;
+    padding:8px;
+    display:none;
+    z-index:9999;
+    box-shadow:0 0 20px rgba(0,0,0,.45);
+}
 
-  .time {
-    font-size: 12px;
-    opacity: 0.7;
-    min-width: 40px;
-  }
+.song{
+    padding:8px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.song:hover{
+    background:#3a3a3a;
+}
+
+.song.active{
+    background:#39294f;
+}
 </style>
 </head>
 
@@ -128,118 +153,165 @@
 
 <div class="player">
 
-  <div class="gear" onclick="togglePanel()">⚙</div>
+    <div class="gear" onclick="togglePanel()">⚙</div>
 
-  <div class="panel" id="panel"></div>
+    <div class="panel" id="panel"></div>
 
-  <div class="title" id="title">Enter Song</div>
+    <img id="cover" class="cover" src="" alt="Album Cover">
 
-  <div class="timebar">
-    <span class="time" id="current">0:00</span>
+    <div class="title" id="title">Select a Song</div>
 
-    <div class="bar" onclick="seek(event)">
-      <div class="progress" id="progress"></div>
+    <div class="timebar">
+        <span class="time" id="current">0:00</span>
+
+        <div class="bar" onclick="seek(event)">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <span class="time" id="duration">0:00</span>
     </div>
 
-    <span class="time" id="duration">0:00</span>
-  </div>
+    <audio id="audio"></audio>
 
-  <audio id="audio"></audio>
-
-  <div class="controls">
-    <div class="btn" onclick="playPause()" id="pp">||</div>
-  </div>
+    <div class="controls">
+        <div class="btn" id="playBtn" onclick="playPause()">▷</div>
+    </div>
 
 </div>
 
 <script>
 const audio = document.getElementById("audio");
+const title = document.getElementById("title");
+const cover = document.getElementById("cover");
+const panel = document.getElementById("panel");
 const progress = document.getElementById("progress");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
-const panel = document.getElementById("panel");
-const title = document.getElementById("title");
-const pp = document.getElementById("pp");
+const playBtn = document.getElementById("playBtn");
 
-const songs = {
-  "song1.mp3": "Song 1",
-  "song2.mp3": "Song 2",
-  "song3.mp3": "Song 3"
-};
+const songs = [
+{
+    name:"Song 1",
+    file:"song1.mp3",
+    cover:"cover1.jpg"
+},
+{
+    name:"Song 2",
+    file:"song2.mp3",
+    cover:"cover2.jpg"
+},
+{
+    name:"Song 3",
+    file:"song3.mp3",
+    cover:"cover3.jpg"
+}
+];
 
-let currentSong = "song1.mp3";
+let currentSong = 0;
 
-function buildMenu() {
-  panel.innerHTML = "";
+function loadSong(index){
+    currentSong = index;
 
-  for (let file in songs) {
-    let div = document.createElement("div");
-    div.className = "song" + (file === currentSong ? " active" : "");
-    div.textContent = songs[file];
+    audio.src = songs[index].file;
+    title.textContent = songs[index].name;
+    cover.src = songs[index].cover;
 
-    div.onclick = () => {
-      currentSong = file;
-      loadSong();
-      play();
-      buildMenu();
-    };
-
-    panel.appendChild(div);
-  }
+    buildMenu();
 }
 
-function loadSong() {
-  audio.src = currentSong;
-  title.textContent = songs[currentSong];
+function buildMenu(){
+    panel.innerHTML = "";
+
+    songs.forEach((song,index)=>{
+
+        const item = document.createElement("div");
+
+        item.className =
+            "song" +
+            (index === currentSong ? " active" : "");
+
+        item.textContent = song.name;
+
+        item.onclick = () => {
+            loadSong(index);
+            audio.play();
+            playBtn.textContent = "||";
+            panel.style.display = "none";
+        };
+
+        panel.appendChild(item);
+    });
 }
 
-function play() {
-  audio.play();
-  pp.textContent = "||";
+function playPause(){
+
+    if(audio.paused){
+        audio.play();
+        playBtn.textContent = "||";
+    }
+    else{
+        audio.pause();
+        playBtn.textContent = "▷";
+    }
 }
 
-function pause() {
-  audio.pause();
-  pp.textContent = "▷";
+function togglePanel(){
+    panel.style.display =
+        panel.style.display === "block"
+        ? "none"
+        : "block";
 }
 
-function playPause() {
-  if (!audio.src) loadSong();
+audio.addEventListener("timeupdate",()=>{
 
-  if (audio.paused) {
-    play();
-  } else {
-    pause();
-  }
-}
+    const percent =
+        (audio.currentTime / audio.duration) * 100;
 
-audio.addEventListener("timeupdate", () => {
-  let percent = (audio.currentTime / audio.duration) * 100;
-  progress.style.width = percent + "%";
+    progress.style.width =
+        (percent || 0) + "%";
 
-  current.textContent = format(audio.currentTime);
-  duration.textContent = format(audio.duration);
+    current.textContent =
+        formatTime(audio.currentTime);
+
+    duration.textContent =
+        formatTime(audio.duration);
 });
 
-function format(sec) {
-  if (!sec) return "0:00";
-  let m = Math.floor(sec / 60);
-  let s = Math.floor(sec % 60);
-  return m + ":" + (s < 10 ? "0" + s : s);
+audio.addEventListener("ended",()=>{
+    playBtn.textContent = "▷";
+});
+
+function seek(e){
+
+    const rect =
+        e.currentTarget.getBoundingClientRect();
+
+    const clickX =
+        e.clientX - rect.left;
+
+    const percent =
+        clickX / rect.width;
+
+    audio.currentTime =
+        percent * audio.duration;
 }
 
-function seek(e) {
-  let bar = e.currentTarget;
-  let percent = e.offsetX / bar.offsetWidth;
-  audio.currentTime = percent * audio.duration;
+function formatTime(seconds){
+
+    if(!seconds || isNaN(seconds))
+        return "0:00";
+
+    const mins =
+        Math.floor(seconds / 60);
+
+    const secs =
+        Math.floor(seconds % 60);
+
+    return mins + ":" +
+        String(secs).padStart(2,"0");
 }
 
-function togglePanel() {
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
-}
-
-loadSong();
-buildMenu();
+loadSong(0);
 </script>
 
 </body>
