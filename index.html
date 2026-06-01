@@ -18,32 +18,59 @@ body{
 }
 
 .player{
-    width:320px;
+    width:260px;
     background:#232323;
     border-radius:14px;
-    padding:20px;
+    padding:16px;
     position:relative;
     box-sizing:border-box;
 }
 
 .gear{
     position:absolute;
-    top:12px;
-    right:12px;
+    top:10px;
+    right:10px;
     cursor:pointer;
-    font-size:18px;
+    font-size:16px;
     opacity:.8;
-    transition:.2s;
 }
 
 .gear:hover{
     opacity:1;
 }
 
+.panel{
+    position:absolute;
+    top:38px;
+    right:10px;
+    width:160px;
+    background:#2b2b2b;
+    border-radius:10px;
+    padding:8px;
+    display:none;
+    z-index:9999;
+    box-shadow:0 0 20px rgba(0,0,0,.45);
+}
+
+.song{
+    padding:7px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:13px;
+}
+
+.song:hover{
+    background:#3a3a3a;
+}
+
+.song.active{
+    background:#39294f;
+}
+
 .cover{
-    width:130px;
-    height:130px;
-    margin:0 auto 12px;
+    width:105px;
+    height:105px;
+    margin:10px auto 8px;
     border-radius:10px;
     object-fit:cover;
     display:block;
@@ -51,23 +78,27 @@ body{
 
 .title{
     text-align:center;
-    font-size:16px;
-    margin-bottom:15px;
-    color:white;
+    font-size:14px;
+    margin-bottom:10px;
 }
 
 .timebar{
     display:flex;
     align-items:center;
-    gap:8px;
-    margin-bottom:18px;
+    gap:6px;
 }
 
-.time{
-    font-size:12px;
-    opacity:.75;
-    min-width:36px;
-    text-align:center;
+.playbtn{
+    font-size:16px;          /* smaller */
+    cursor:pointer;
+    user-select:none;
+    padding:0 6px;
+    transition:.2s;
+    transform: translateY(-2px); /* slightly higher */
+}
+
+.playbtn:hover{
+    color:#39294f;
 }
 
 .bar{
@@ -92,59 +123,20 @@ body{
 .progress::after{
     content:"";
     position:absolute;
-    right:-5px;
+    right:-4px;
     top:50%;
     transform:translateY(-50%);
-    width:10px;
-    height:10px;
+    width:8px;
+    height:8px;
     border-radius:50%;
     background:#39294f;
 }
 
-.controls{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.btn{
-    cursor:pointer;
-    user-select:none;
-    font-size:22px;
-    padding:4px 12px;
-    transition:.2s;
-}
-
-.btn:hover{
-    color:#39294f;
-}
-
-.panel{
-    position:absolute;
-    top:42px;
-    right:12px;
-    width:170px;
-    background:#2b2b2b;
-    border-radius:10px;
-    padding:8px;
-    display:none;
-    z-index:9999;
-    box-shadow:0 0 20px rgba(0,0,0,.45);
-}
-
-.song{
-    padding:8px;
-    border-radius:6px;
-    cursor:pointer;
-    transition:.15s;
-}
-
-.song:hover{
-    background:#3a3a3a;
-}
-
-.song.active{
-    background:#39294f;
+.time{
+    font-size:11px;
+    opacity:.7;
+    min-width:34px;
+    text-align:center;
 }
 </style>
 </head>
@@ -157,11 +149,14 @@ body{
 
     <div class="panel" id="panel"></div>
 
-    <img id="cover" class="cover" src="" alt="Album Cover">
+    <img id="cover" class="cover" src="cover.jpg" alt="cover">
 
-    <div class="title" id="title">Select a Song</div>
+    <div class="title" id="title">select a song</div>
 
     <div class="timebar">
+
+        <div class="playbtn" id="playBtn" onclick="playPause()">▷</div>
+
         <span class="time" id="current">0:00</span>
 
         <div class="bar" onclick="seek(event)">
@@ -169,13 +164,10 @@ body{
         </div>
 
         <span class="time" id="duration">0:00</span>
+
     </div>
 
     <audio id="audio"></audio>
-
-    <div class="controls">
-        <div class="btn" id="playBtn" onclick="playPause()">▷</div>
-    </div>
 
 </div>
 
@@ -193,17 +185,17 @@ const songs = [
 {
     name:"the cure",
     file:"song1.mp3",
-    cover:"cover1.jpg"
+    cover:"cover.jpg"
 },
 {
-    name:"Song 2",
+    name:"begged",
     file:"song2.mp3",
-    cover:"cover2.jpg"
+    cover:"cover.jpg"
 },
 {
-    name:"Song 3",
+    name:"stranger",
     file:"song3.mp3",
-    cover:"cover3.jpg"
+    cover:"cover.jpg"
 }
 ];
 
